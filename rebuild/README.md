@@ -28,23 +28,52 @@ python3 -m http.server 8090 --directory generated/preview
 
 Open http://localhost:8090/. Use HTTP; opening the HTML directly will not resolve root-relative resources. Preview links to pages not captured will return 404. Slideshows, dropdown menus, directory filters, maps, calendar navigation, sign-in, subscription and submission forms require rebuilding. Some animated content is forced visible to make it inspectable.
 
-## Start WordPress locally
+## Start WordPress locally on your Mac
 
-This environment did not include Docker or PHP, so the Docker startup, PHP execution and import have **not** been run here. The scripts are a development starting point pending those checks on your machine. The starter uses the official `wordpress:php8.3-apache` tag; record the resolved WordPress version and pin image digests after validating the stack.
+Install and open [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/) using the installer for your Mac's processor. The Compose file does not force Intel emulation. Python 3 is also required for the helper and recovery tools.
 
-1. Copy `.env.example` to `.env` and replace both passwords with random local values.
-2. Run `docker compose up -d --build wordpress` and wait for WordPress to finish initializing.
-3. Visit http://localhost:8080/ and complete the fresh WordPress setup using test admin details.
-4. Run:
+From the repository root, after extracting the capture archive:
 
 ```sh
-docker compose run --rm cli theme activate labg-recovery
-docker compose run --rm cli eval-file /rebuild/wordpress/import.php
+bash rebuild/tools/mac-start.sh
 ```
 
-5. Visit the homepage, About, Breweries, Events, news articles and nested pages. The WordPress editor contains the captured HTML body, including the public header/footer; use the code editor for initial edits. This is not a recovered Avia builder layout. The REST originals retain published rendered page/post content and public metadata for a later proper content-model import.
+The helper checks Docker, Compose and the extracted files, creates random database passwords in an ignored `.env` file if one does not already exist, and starts WordPress at http://localhost:8080/. Complete the WordPress setup in your browser, then run:
 
-The importer uses pages for visual recovery, including articles and listings. Before production, migrate posts, events and brewery listings into their correct native post types and replace repeated header/footer markup with maintained templates. Archived original IDs remain in JSON; they are not recreated as WordPress IDs.
+```sh
+bash rebuild/tools/mac-import.sh
+```
+
+The importer now preserves existing recovered pages by default. You can edit them without losing your work on the next normal import. Only use the following command if you deliberately want to replace those edits with the captured versions:
+
+```sh
+bash rebuild/tools/mac-import.sh --refresh
+```
+
+Stop the containers without deleting data:
+
+```sh
+cd rebuild
+docker compose stop
+```
+
+Run the start helper again to resume. Keep `.env` together with your local setup; changing its database passwords after the database volume is initialized does not change the database's stored passwords. The named project `labg-local` keeps these volumes separate from unrelated projects named `rebuild`.
+
+This environment has no Docker or PHP, so startup, PHP execution and import still require runtime checks on your Mac. The starter uses the official `wordpress:php8.3-apache` tag; record the resolved WordPress version and pin image digests after validating the stack.
+
+## Template files you can work on now
+
+- `wordpress/theme/header.php`: WordPress document head and header for new pages.
+- `wordpress/theme/footer.php`: shared document footer and footer for new pages.
+- `wordpress/theme/index.php`: recovered-page rendering and normal editable pages.
+- `wordpress/theme/style.css`: versioned styling for new native pages.
+- `wordpress/theme/functions.php`: theme support, captured styling classes and original URL routing.
+
+Captured pages still include their original visible header/footer inside their imported content to preserve the source layout. Moving those elements into a single editable navigation/header is a later template migration, not something the public capture has already recovered. New WordPress pages use the shared native header/footer and the Primary navigation menu set in WordPress. Create future CiviCRM pages as new native pages; archived forms remain disabled.
+
+The importer uses pages for visual recovery, including captured articles and listings. Before production, migrate posts, events and brewery listings into their correct native post types. Original IDs remain in REST JSON and the reconstructed WXR; the visual import creates fresh IDs.
+
+Local Compose sets WordPress's [environment type](https://developer.wordpress.org/reference/functions/wp_get_environment_type/) to `local`. WordPress email and indexing protections apply only to local/development/staging environments. Archived form blocking applies only to recovered pages, allowing future native CiviCRM pages to submit. CiviCRM outgoing mail still needs its own configuration.
 
 ## CiviCRM next setup
 

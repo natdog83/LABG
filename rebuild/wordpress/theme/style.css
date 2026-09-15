@@ -1,6 +1,16 @@
 /*
 Theme Name: LABG Public Recovery
 Description: Reconstructed public HTML shell for migration development; not the original Enfold PHP theme.
-Version: 0.1.0
+Version: 0.2.0
 Text Domain: labg-recovery
 */
+/* These rules apply to newly created WordPress pages. Captured pages keep their styles. */
+body.labg-native { margin:0; color:#132f40; background:#fff; font:16px/1.6 system-ui,sans-serif; }
+.labg-native-header, .labg-native-footer { padding:1.25rem max(1.25rem, calc((100% - 1120px)/2)); background:#132f40; color:#fff; }
+.labg-native-header a { color:inherit; }
+.labg-native-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; }
+.labg-native-header ul { display:flex; flex-wrap:wrap; list-style:none; padding:0; gap:1rem; }
+.labg-native-content { max-width:1120px; margin:auto; padding:2rem 1.25rem; min-height:65vh; overflow-wrap:anywhere; }
+.labg-native-content img { max-width:100%; height:auto; }
+.labg-skip-link { position:absolute; left:1rem; top:-10rem; padding:.75rem; background:white; z-index:100000; }
+.labg-skip-link:focus { top:1rem; }

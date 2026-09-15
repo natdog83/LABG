@@ -1,13 +1,14 @@
-<?php
-// Captured markup is an interim visual reference; native content remains editable.
-$head = get_post_meta(get_queried_object_id(), '_labg_head', true);
-$body = get_post_meta(get_queried_object_id(), '_labg_body_attributes', true);
-$html = get_post_meta(get_queried_object_id(), '_labg_html_attributes', true);
-?><!doctype html>
-<html <?php echo $html ?: 'lang="en-US"'; ?>>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<?php echo $head; wp_head(); ?></head>
-<body <?php echo $body; ?>><?php wp_body_open(); ?>
-<?php if (have_posts()) : while (have_posts()) : the_post(); the_content(); endwhile;
-else: ?><main><h1>Page not recovered</h1><p>This page needs to be rebuilt.</p></main><?php endif; ?>
-<?php wp_footer(); ?></body></html>
+<?php get_header(); ?>
+<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+    <?php if (get_post_meta(get_the_ID(), '_labg_source_url', true)) : ?>
+        <?php the_content(); ?>
+    <?php else : ?>
+        <main id="labg-content" class="labg-native-content">
+            <h1><?php the_title(); ?></h1>
+            <?php the_content(); ?>
+        </main>
+    <?php endif; ?>
+<?php endwhile; else : ?>
+<main id="labg-content" class="labg-native-content"><h1>Page not found</h1><p>This address has not been recovered or created yet.</p><a href="<?php echo esc_url(home_url('/')); ?>">Return to the homepage</a></main>
+<?php endif; ?>
+<?php get_footer(); ?>

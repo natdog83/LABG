@@ -21,3 +21,15 @@ add_filter('page_link', function ($link, $id) {
     $source=get_post_meta($id,'_labg_source_url',true);
     return $source ? home_url(wp_parse_url($source,PHP_URL_PATH)) : $link;
 },10,2);
+
+/** Keep the original styling classes without printing arbitrary HTML attributes. */
+function labg_recovery_attributes($key) {
+    $raw = get_post_meta(get_queried_object_id(), $key, true);
+    preg_match_all('/(?:^|\s)(id|class)\s*=\s*([\'"])(.*?)\2/s', $raw, $matches, PREG_SET_ORDER);
+    $attributes = [];
+    foreach ($matches as $match) { $attributes[$match[1]] = $match[3]; }
+    return $attributes;
+}
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style('labg-recovery', get_stylesheet_uri(), [], wp_get_theme()->get('Version'));
+});
