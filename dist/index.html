@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive concept for the Los Angeles County Brewers Guild member portal.">
+  <title>LABG Member Portal Concept</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2332577c'/%3E%3Cpath fill='%2399c33e' d='M14 17h36v7H14zm4 11h28v20H18zm6 6v14h5V34zm11 0v14h5V34z'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --blue: #32577c;
+      --blue-900: #17334e;
+      --blue-800: #234765;
+      --green: #99c33e;
+      --green-dark: #739722;
+      --ink: #182431;
+      --muted: #647383;
+      --line: #dce3e9;
+      --surface: #ffffff;
+      --bg: #eef2f5;
+      --warn: #e99e38;
+      --danger: #c55252;
+      --shadow: 0 10px 30px rgba(23, 51, 78, .10);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Poppins, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid rgba(153,195,62,.5); outline-offset: 2px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .app { min-height: 100vh; display: grid; grid-template-columns: 270px minmax(0, 1fr); }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 26px 18px 22px;
+      background: var(--blue-900);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 0 8px 26px;
+      border-bottom: 1px solid rgba(255,255,255,.13);
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--green);
+      color: var(--green);
+      font-family: "Hammersmith One", sans-serif;
+      font-size: 18px;
+      letter-spacing: -.06em;
+    }
+    .brand small { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .72; }
+    .brand strong { display: block; font-family: "Hammersmith One", sans-serif; font-size: 18px; line-height: 1.08; text-transform: uppercase; }
+    .nav-label { margin: 24px 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.48); }
+    .nav { display: grid; gap: 4px; }
+    .nav button {
+      min-height: 44px;
+      padding: 10px 12px;
+      color: rgba(255,255,255,.78);
+      background: transparent;
+      border: 0;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav button:hover { background: rgba(255,255,255,.08); color: white; }
+    .nav button.active { background: var(--green); color: #132a3e; font-weight: 700; }
+    .nav svg { width: 19px; height: 19px; flex: 0 0 auto; }
+    .sidebar-foot { margin-top: auto; padding: 18px 10px 0; color: rgba(255,255,255,.58); font-size: 12px; }
+    .sidebar-foot strong { color: white; font-size: 13px; }
+
+    .main { min-width: 0; }
+    .topbar {
+      min-height: 74px;
+      padding: 12px clamp(18px, 3vw, 42px);
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .concept-pill { display: inline-flex; align-items: center; gap: 8px; color: var(--blue); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .concept-pill::before { content: ""; width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+    .account { display: flex; align-items: center; gap: 11px; }
+    .account-copy { text-align: right; }
+    .account-copy strong, .account-copy span { display: block; }
+    .account-copy strong { font-size: 14px; }
+    .account-copy span { color: var(--muted); font-size: 12px; }
+    .avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: var(--blue); color: white; font-weight: 700; }
+    .mobile-menu { display: none; padding: 9px 12px; border: 1px solid var(--line); background: white; border-radius: 8px; color: var(--blue); }
+
+    .content { width: min(1460px, 100%); margin: 0 auto; padding: 34px clamp(18px, 3vw, 42px) 64px; }
+    .screen { display: none; animation: fade .18s ease; }
+    .screen.active { display: block; }
+    @keyframes fade { from { opacity: .5; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .page-head { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; margin-bottom: 24px; }
+    .eyebrow { margin: 0 0 7px; color: var(--green-dark); font-size: 12px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3 { font-family: "Hammersmith One", Poppins, sans-serif; font-weight: 400; }
+    h1 { margin: 0; font-size: clamp(28px, 3.5vw, 42px); letter-spacing: -.025em; line-height: 1.08; }
+    h2 { margin: 0; font-size: 24px; line-height: 1.2; }
+    h3 { margin: 0; font-size: 18px; line-height: 1.25; }
+    .lead { max-width: 720px; margin: 8px 0 0; color: var(--muted); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--green); color: #183048; border-color: var(--green-dark); }
+    .btn-primary:hover { background: #a8d44a; }
+    .btn-blue { background: var(--blue); color: white; }
+    .btn-outline { background: white; color: var(--blue); border-color: #bfcbd5; }
+    .btn-quiet { background: #eef4f8; color: var(--blue); }
+    .btn-sm { min-height: 34px; padding: 6px 11px; font-size: 13px; }
+
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card-pad { padding: 23px; }
+    .grid { display: grid; gap: 20px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-main { grid-template-columns: minmax(0, 1.6fr) minmax(300px, .8fr); }
+    .section-title { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 17px; }
+    .section-title a, .text-link { color: var(--blue); font-size: 13px; font-weight: 700; text-decoration: none; }
+    .section-title a:hover, .text-link:hover { text-decoration: underline; }
+
+    .welcome {
+      overflow: hidden;
+      position: relative;
+      padding: 30px;
+      color: white;
+      background: linear-gradient(120deg, var(--blue-900), var(--blue) 72%);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .welcome::after { content: "#LABEER"; position: absolute; right: -8px; bottom: -24px; color: rgba(255,255,255,.055); font: 72px "Hammersmith One", sans-serif; }
+    .welcome h1 { max-width: 740px; }
+    .welcome p { max-width: 680px; margin: 10px 0 0; color: rgba(255,255,255,.74); }
+    .brewery-emblem { width: 94px; height: 94px; border: 2px solid var(--green); display: grid; place-items: center; text-align: center; border-radius: 50%; color: var(--green); font-family: "Hammersmith One", sans-serif; line-height: 1.05; transform: rotate(-5deg); }
+    .status-strip { margin: 18px 0 20px; display: grid; grid-template-columns: repeat(4, 1fr); overflow: hidden; }
+    .stat { padding: 18px 20px; background: white; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat span { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .stat strong { display: block; margin-top: 5px; font-size: 18px; }
+    .status { display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .status.good { color: #4c7114; background: #edf6dd; }
+    .status.pending { color: #925d0f; background: #fff3df; }
+    .status.info { color: var(--blue); background: #e8f0f6; }
+    .status.closed { color: #6c7278; background: #edf0f2; }
+
+    .task-list, .event-list, .resource-list, .thread-list, .rep-list { display: grid; }
+    .task, .event, .resource, .thread, .rep-row { padding: 16px 0; border-top: 1px solid var(--line); }
+    .task:first-child, .event:first-child, .resource:first-child, .thread:first-child, .rep-row:first-child { border-top: 0; padding-top: 0; }
+    .task:last-child, .event:last-child, .resource:last-child, .thread:last-child, .rep-row:last-child { padding-bottom: 0; }
+    .task { display: grid; grid-template-columns: 38px 1fr auto; gap: 13px; align-items: center; }
+    .task-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; background: #edf4f8; color: var(--blue); font-weight: 700; }
+    .task strong, .event strong, .resource strong { display: block; font-size: 14px; }
+    .task small, .event small, .resource small { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .event { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; }
+    .date-tile { width: 52px; padding: 6px 4px; background: var(--blue); color: white; border-radius: 8px; text-align: center; }
+    .date-tile span, .date-tile strong { display: block; }
+    .date-tile span { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    .date-tile strong { font-size: 20px; line-height: 1.1; }
+    .quick-links { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .quick-link { padding: 16px; min-height: 92px; background: #f5f8fa; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; }
+    .quick-link strong { display: block; font-size: 14px; }
+    .quick-link span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .quick-link:hover { border-color: var(--green); transform: translateY(-1px); }
+
+    .form-card { padding: 26px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 17px; }
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 700; color: #344a5f; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #becbd5;
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+    }
+    textarea { min-height: 104px; resize: vertical; }
+    input:disabled { background: #f2f4f6; color: #6f7a84; }
+    .help { color: var(--muted); font-size: 12px; }
+    .profile-preview { overflow: hidden; }
+    .profile-cover { height: 104px; background: linear-gradient(135deg, var(--blue-900), var(--blue)); position: relative; }
+    .profile-cover::after { content: "INDEPENDENT • LOCAL • UNITED"; position: absolute; right: 18px; bottom: 14px; color: rgba(255,255,255,.52); font-size: 10px; letter-spacing: .12em; }
+    .profile-body { padding: 0 23px 23px; }
+    .profile-logo { width: 84px; height: 84px; margin-top: -42px; position: relative; display: grid; place-items: center; border-radius: 50%; border: 5px solid white; background: #f4ede1; color: #5a3119; font-family: "Hammersmith One", sans-serif; font-size: 23px; box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+    .profile-body h2 { margin-top: 15px; }
+    .profile-meta { margin-top: 7px; color: var(--muted); font-size: 13px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+    .tag { padding: 5px 9px; background: #eef3f6; border-radius: 999px; color: var(--blue); font-size: 12px; font-weight: 700; }
+    .completion { margin-top: 20px; }
+    .completion-head { display: flex; justify-content: space-between; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+    .progress { height: 9px; border-radius: 99px; background: #dfe6eb; overflow: hidden; }
+    .progress span { display: block; height: 100%; background: var(--green); }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 15px; margin-bottom: 18px; }
+    .search { flex: 1 1 300px; position: relative; }
+    .search input { padding-left: 40px; }
+    .search::before { content: "⌕"; position: absolute; left: 14px; top: 7px; font-size: 22px; color: var(--muted); }
+    .filter-row { display: flex; gap: 9px; flex-wrap: wrap; }
+    .filter { min-height: 40px; padding: 8px 12px; border: 1px solid #c2ced7; border-radius: 8px; background: white; color: var(--blue); font-size: 13px; font-weight: 700; }
+    .filter.active { background: var(--blue); color: white; border-color: var(--blue); }
+    .directory-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+    .member-card { padding: 20px; display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start; }
+    .member-logo { width: 56px; height: 56px; border-radius: 12px; display: grid; place-items: center; background: #edf2f5; color: var(--blue); font-family: "Hammersmith One", sans-serif; font-size: 16px; }
+    .member-card h3 { font-size: 17px; }
+    .member-card p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .member-card .tags { grid-column: 1/-1; margin-top: 4px; }
+    .empty { display: none; padding: 42px; text-align: center; color: var(--muted); }
+
+    .table-card { overflow: hidden; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th { background: #f5f8fa; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    td { font-size: 14px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .person { display: flex; align-items: center; gap: 11px; }
+    .person-avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--blue); color: white; font-size: 12px; font-weight: 700; }
+    .person small { display: block; color: var(--muted); }
+    .roles { display: flex; flex-wrap: wrap; gap: 6px; }
+    .role { padding: 4px 8px; background: #e9f0f5; border-radius: 5px; color: var(--blue); font-size: 11px; font-weight: 700; }
+    .kebab { border: 0; background: transparent; color: var(--muted); font-size: 22px; }
+
+    .forum-layout { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 20px; }
+    .forum-cats { padding: 12px; align-self: start; }
+    .forum-cat { width: 100%; padding: 13px 12px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ink); font-size: 14px; }
+    .forum-cat span { float: right; padding: 2px 7px; border-radius: 99px; background: #e7edf2; color: var(--blue); font-size: 11px; font-weight: 700; }
+    .forum-cat.active { background: var(--blue); color: white; }
+    .forum-cat.active span { background: rgba(255,255,255,.18); color: white; }
+    .forum-list { padding: 22px; }
+    .thread { display: grid; grid-template-columns: 42px 1fr auto; gap: 14px; align-items: start; }
+    .thread h3 { font-size: 16px; }
+    .thread p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .thread-meta { margin-top: 9px; display: flex; gap: 14px; color: var(--muted); font-size: 11px; }
+    .reply-count { min-width: 54px; text-align: center; color: var(--muted); font-size: 11px; }
+    .reply-count strong { display: block; color: var(--blue); font-size: 18px; }
+    .pinned { color: var(--green-dark); font-weight: 700; }
+
+    .calendar-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    .mini-stat { padding: 18px; }
+    .mini-stat span { color: var(--muted); font-size: 12px; }
+    .mini-stat strong { display: block; margin-top: 4px; font-size: 23px; }
+    .event-status-row { display: grid; grid-template-columns: 80px 1fr auto auto; gap: 18px; align-items: center; padding: 18px 20px; border-top: 1px solid var(--line); }
+    .event-status-row:first-child { border-top: 0; }
+    .event-status-row time { color: var(--blue); font-weight: 700; }
+    .event-status-row p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+
+    .resource-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+    .resource-card { padding: 21px; }
+    .resource-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; background: #eaf1f6; color: var(--blue); font-weight: 700; }
+    .resource-card h3 { margin-top: 16px; }
+    .resource-card p { min-height: 58px; margin: 7px 0 14px; color: var(--muted); font-size: 13px; }
+    .resource-meta { padding-top: 13px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
+
+    .advantage-hero { overflow: hidden; position: relative; padding: 28px; color: white; background: linear-gradient(125deg, #17334e, #32577c 70%, #48749a); }
+    .advantage-hero::after { content: "$"; position: absolute; right: 24px; bottom: -34px; color: rgba(255,255,255,.06); font: 170px "Hammersmith One", sans-serif; }
+    .advantage-hero h2 { font-size: 30px; max-width: 660px; }
+    .advantage-hero p { max-width: 760px; margin: 9px 0 0; color: rgba(255,255,255,.72); }
+    .advantage-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-top: 22px; position: relative; z-index: 1; }
+    .advantage-stat { padding: 15px; border: 1px solid rgba(255,255,255,.17); border-radius: 10px; background: rgba(255,255,255,.08); }
+    .advantage-stat span, .advantage-stat strong { display: block; }
+    .advantage-stat span { color: rgba(255,255,255,.63); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+    .advantage-stat strong { margin-top: 4px; color: white; font-size: 17px; }
+    .notice { margin: 18px 0; padding: 14px 16px; border-left: 4px solid var(--green); border-radius: 8px; background: #f8fbf2; color: #526038; font-size: 13px; }
+    .benefit-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+    .benefit-card { overflow: hidden; display: flex; flex-direction: column; }
+    .benefit-top { min-height: 88px; padding: 19px 20px; display: flex; justify-content: space-between; gap: 12px; background: #f4f7f9; border-bottom: 1px solid var(--line); }
+    .partner-mark { width: 52px; height: 52px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 12px; background: var(--blue); color: white; font-family: "Hammersmith One", sans-serif; font-size: 15px; text-align: center; line-height: 1.05; }
+    .benefit-card:nth-child(2) .partner-mark { background: var(--green-dark); }
+    .benefit-card:nth-child(3) .partner-mark { background: #765b37; }
+    .benefit-card:nth-child(4) .partner-mark { background: #624e79; }
+    .benefit-card:nth-child(5) .partner-mark { background: #486e6d; }
+    .benefit-card:nth-child(6) .partner-mark { background: #5d6c7a; }
+    .offer-type { align-self: start; padding: 4px 8px; border-radius: 999px; background: white; color: var(--blue); border: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .benefit-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+    .benefit-partner { margin-bottom: 5px; color: var(--green-dark); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .benefit-body h3 { font-size: 20px; }
+    .benefit-body p { margin: 9px 0 16px; color: var(--muted); font-size: 13px; }
+    .benefit-details { margin: 0 0 18px; padding: 0; list-style: none; display: grid; gap: 8px; }
+    .benefit-details li { position: relative; padding-left: 19px; color: #425365; font-size: 12px; }
+    .benefit-details li::before { content: "✓"; position: absolute; left: 0; color: var(--green-dark); font-weight: 700; }
+    .benefit-body .btn { margin-top: auto; }
+    .feature-value-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .feature-value { padding: 19px; box-shadow: none; }
+    .feature-value .task-icon { margin-bottom: 14px; }
+    .feature-value p { margin: 7px 0 14px; color: var(--muted); font-size: 12px; }
+    .feature-value a { color: var(--blue); font-size: 12px; font-weight: 700; text-decoration: none; }
+    .feature-value a:hover { text-decoration: underline; }
+
+    .service-tabs { display: flex; gap: 7px; padding: 8px; margin-bottom: 20px; overflow-x: auto; }
+    .service-tab { flex: 0 0 auto; min-height: 42px; padding: 9px 13px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .service-tab:hover { background: #edf3f7; color: var(--blue); }
+    .service-tab.active { background: var(--blue); color: white; }
+    .service-panel { display: none; }
+    .service-panel.active { display: block; animation: fade .18s ease; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
+    .metric { padding: 18px; }
+    .metric span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+    .metric strong { display: block; margin-top: 5px; font-size: 23px; }
+    .case-row { display: grid; grid-template-columns: minmax(100px,.7fr) minmax(230px,1.5fr) minmax(150px,.8fr) auto; gap: 16px; align-items: center; padding: 17px 20px; border-top: 1px solid var(--line); }
+    .case-row:first-child { border-top: 0; }
+    .case-row small { display: block; color: var(--muted); }
+    .buy-grid, .listing-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+    .buy-card, .listing-card { padding: 21px; }
+    .buy-card p, .listing-card p { color: var(--muted); font-size: 13px; }
+    .buy-progress { margin: 17px 0; }
+    .buy-progress .completion-head { font-size: 11px; }
+    .buy-card .actions { margin-top: 16px; }
+    .alert-list { display: grid; gap: 12px; }
+    .alert-card { padding: 18px; display: grid; grid-template-columns: 44px 1fr auto; gap: 15px; align-items: start; }
+    .alert-card h3 { font-size: 16px; }
+    .alert-card p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .alert-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; background: #fff3df; color: #925d0f; font-weight: 700; }
+    .alert-icon.info { background: #e8f0f6; color: var(--blue); }
+    .benchmark-layout { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(280px,.7fr); gap: 20px; }
+    .chart { padding: 24px; }
+    .bar-row { display: grid; grid-template-columns: 145px 1fr 58px; gap: 12px; align-items: center; margin-top: 16px; font-size: 12px; }
+    .bar-track { height: 22px; border-radius: 5px; background: #edf1f4; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--blue); border-radius: 5px; }
+    .bar-fill.you { background: var(--green); }
+    .chart-legend { display: flex; gap: 16px; margin-top: 18px; color: var(--muted); font-size: 11px; }
+    .legend-dot { width: 9px; height: 9px; display: inline-block; margin-right: 5px; border-radius: 2px; background: var(--blue); }
+    .legend-dot.you { background: var(--green); }
+    .listing-card .listing-meta { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 13px; color: var(--muted); font-size: 11px; }
+    .listing-card h3 { font-size: 17px; }
+    .savings-total { padding: 28px; color: white; background: var(--blue); display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+    .savings-total strong { display: block; font: 40px "Hammersmith One", sans-serif; }
+    .savings-total span { color: rgba(255,255,255,.7); font-size: 12px; }
+    .savings-row { padding: 16px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 130px 100px; gap: 16px; align-items: center; }
+    .savings-row:first-child { border-top: 0; }
+    .savings-row small { display: block; color: var(--muted); }
+    .preference-group { padding: 22px; }
+    .preference-row { padding: 14px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto auto; gap: 18px; align-items: center; }
+    .preference-row:first-of-type { margin-top: 13px; }
+    .preference-row strong, .preference-row small { display: block; }
+    .preference-row small { color: var(--muted); }
+    .switch { position: relative; width: 44px; height: 25px; }
+    .switch input { position: absolute; opacity: 0; width: 1px; min-height: 1px; }
+    .switch span { position: absolute; inset: 0; border-radius: 99px; background: #cbd4dc; transition: .2s; }
+    .switch span::after { content: ""; position: absolute; width: 19px; height: 19px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+    .switch input:checked + span { background: var(--green); }
+    .switch input:checked + span::after { transform: translateX(19px); }
+
+    .billing-card { overflow: hidden; }
+    .billing-head { padding: 26px; color: white; background: var(--blue); display: flex; justify-content: space-between; gap: 18px; }
+    .billing-head p { margin: 6px 0 0; color: rgba(255,255,255,.7); }
+    .amount { text-align: right; }
+    .amount strong { display: block; font: 32px "Hammersmith One", sans-serif; }
+    .amount span { font-size: 12px; color: rgba(255,255,255,.7); }
+    .invoice-lines { padding: 22px 26px; }
+    .invoice-line { display: flex; justify-content: space-between; gap: 20px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .invoice-line:last-child { border-bottom: 0; font-weight: 700; }
+    .invoice-line span { color: var(--muted); }
+    .permissions-list { display: grid; gap: 10px; margin-top: 18px; }
+    .permission { padding: 13px; border: 1px solid var(--line); border-radius: 9px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .permission strong { display: block; font-size: 13px; }
+    .permission small { display: block; color: var(--muted); }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; padding: 18px; background: rgba(12,28,42,.66); }
+    .modal-backdrop.open { display: grid; }
+    .modal { width: min(650px, 100%); max-height: calc(100vh - 36px); overflow-y: auto; padding: 26px; background: white; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.3); }
+    .modal-head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 21px; }
+    .close { width: 38px; height: 38px; border: 0; border-radius: 50%; background: #edf2f5; color: var(--blue); font-size: 22px; }
+    .check-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; margin-top: 8px; }
+    .check { display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; }
+    .check input { width: 18px; min-height: 18px; }
+    .modal-foot { margin-top: 22px; display: flex; justify-content: flex-end; gap: 10px; }
+    .toast { position: fixed; right: 24px; bottom: 24px; z-index: 120; max-width: 360px; padding: 14px 17px; border-radius: 9px; background: var(--blue-900); color: white; box-shadow: var(--shadow); transform: translateY(120px); opacity: 0; transition: .25s ease; }
+    .toast.show { transform: none; opacity: 1; }
+    .toast strong { color: var(--green); }
+
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 230px minmax(0,1fr); }
+      .sidebar { padding-inline: 12px; }
+      .directory-grid, .resource-grid, .benefit-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .feature-value-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .buy-grid, .listing-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .benchmark-layout { grid-template-columns: 1fr; }
+      .grid-main { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 820px) {
+      .app { display: block; }
+      .sidebar { position: fixed; inset: 74px auto 0 0; z-index: 40; width: 270px; height: calc(100vh - 74px); transform: translateX(-102%); transition: .2s ease; box-shadow: 20px 0 60px rgba(0,0,0,.22); }
+      .sidebar.open { transform: none; }
+      .brand { display: none; }
+      .topbar { min-height: 74px; }
+      .mobile-menu { display: inline-flex; }
+      .concept-pill { margin-right: auto; }
+      .account-copy { display: none; }
+      .page-head { display: grid; }
+      .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .status-strip { grid-template-columns: repeat(2,1fr); }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .forum-layout { grid-template-columns: 1fr; }
+      .forum-cats { display: flex; overflow-x: auto; gap: 6px; }
+      .forum-cat { width: auto; white-space: nowrap; }
+      .forum-cat span { margin-left: 8px; }
+      .calendar-summary { grid-template-columns: 1fr; }
+      .advantage-stats { grid-template-columns: 1fr; }
+      .case-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 580px) {
+      .content { padding-top: 24px; }
+      .concept-pill { font-size: 11px; }
+      .welcome { grid-template-columns: 1fr; padding: 24px; }
+      .brewery-emblem { display: none; }
+      .status-strip, .directory-grid, .resource-grid, .benefit-grid, .feature-value-grid, .quick-links { grid-template-columns: 1fr; }
+      .metric-grid, .buy-grid, .listing-grid { grid-template-columns: 1fr; }
+      .case-row, .alert-card, .preference-row, .savings-row { grid-template-columns: 1fr; }
+      .savings-total { display: grid; }
+      .bar-row { grid-template-columns: 105px 1fr 48px; }
+      .stat { border-right: 0; border-bottom: 1px solid var(--line); }
+      .stat:last-child { border-bottom: 0; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .filter-row { display: grid; grid-template-columns: repeat(2,1fr); }
+      .thread { grid-template-columns: 38px 1fr; }
+      .reply-count { display: none; }
+      .event-status-row { grid-template-columns: 68px 1fr; }
+      .event-status-row .status, .event-status-row .btn { grid-column: 2; justify-self: start; }
+      .billing-head { display: grid; }
+      .amount { text-align: left; }
+      .check-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Member portal navigation">
+      <div class="brand">
+        <div class="brand-mark">LA</div>
+        <div><small>Los Angeles County</small><strong>Brewers Guild</strong></div>
+      </div>
+      <div class="nav-label">Member portal</div>
+      <nav class="nav" id="nav">
+        <button class="active" data-screen="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</button>
+        <button data-screen="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Brewery Profile</button>
+        <button data-screen="representatives"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Representatives</button>
+        <button data-screen="directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Member Directory</button>
+        <button data-screen="forums"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>Guild Forums</button>
+        <button data-screen="events"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>Events</button>
+        <button data-screen="resources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 5.5v14"/></svg>Resources</button>
+        <button data-screen="advantage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5c3.5 0 4.5 5 4.5 5ZM12 7h4.5a2.5 2.5 0 1 0 0-5c-3.5 0-4.5 5-4.5 5Z"/></svg>Member Advantage</button>
+        <button data-screen="services"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="4"/></svg>Guild Tools</button>
+        <button data-screen="membership"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Membership &amp; Billing</button>
+      </nav>
+      <div class="sidebar-foot"><strong>Portal concept</strong><br>WordPress + CiviCRM<br>Member experience exploration</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-expanded="false" aria-controls="sidebar">☰ <span>Menu</span></button>
+        <div class="concept-pill">Interactive concept — sample data</div>
+        <div class="account">
+          <div class="account-copy"><strong>Nathan McCusker</strong><span>Angry Horse Brewing</span></div>
+          <div class="avatar" aria-hidden="true">NM</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="screen active" id="screen-dashboard" data-title="Dashboard">
+          <div class="welcome">
+            <div>
+              <p class="eyebrow" style="color:var(--green)">Member dashboard</p>
+              <h1>Good evening, Nathan. Here’s what needs your attention.</h1>
+              <p>Manage Angry Horse Brewing’s Guild membership, representatives, events, resources, and industry conversations from one place.</p>
+            </div>
+            <div class="brewery-emblem">ANGRY<br>HORSE<br>BREWING</div>
+          </div>
+
+          <div class="status-strip card">
+            <div class="stat"><span>Membership</span><strong><span class="status good">Active</span></strong></div>
+            <div class="stat"><span>Renews</span><strong>January 1, 2027</strong></div>
+            <div class="stat"><span>Representatives</span><strong>3 active</strong></div>
+            <div class="stat"><span>Profile</span><strong>82% complete</strong></div>
+          </div>
+
+          <div class="grid grid-main">
+            <div class="grid">
+              <article class="card card-pad">
+                <div class="section-title"><h2>Action center</h2><a href="#profile" data-jump="profile">View profile</a></div>
+                <div class="task-list">
+                  <div class="task"><div class="task-icon">1</div><div><strong>Add brewery production range</strong><small>Helps the Guild understand and advocate for its membership.</small></div><button class="btn btn-outline btn-sm" data-jump="profile">Complete</button></div>
+                  <div class="task"><div class="task-icon">2</div><div><strong>Confirm your voting representative</strong><small>Nathan is currently assigned. Review before the October meeting.</small></div><button class="btn btn-outline btn-sm" data-jump="representatives">Review</button></div>
+                  <div class="task"><div class="task-icon">3</div><div><strong>Member event awaiting edits</strong><small>Oktoberfest needs an updated event image before approval.</small></div><button class="btn btn-outline btn-sm" data-jump="events">Open</button></div>
+                </div>
+              </article>
+
+              <article class="card card-pad">
+                <div class="section-title"><h2>Coming up</h2><a href="#events" data-jump="events">All events</a></div>
+                <div class="event-list">
+                  <div class="event"><div class="date-tile"><span>SEP</span><strong>15</strong></div><div><strong>LABG General Membership Meeting</strong><small>12:00–2:00 p.m. · Trademark Brewing, Long Beach</small></div><span class="status info">Registered</span></div>
+                  <div class="event"><div class="date-tile"><span>OCT</span><strong>08</strong></div><div><strong>One with Los Angeles: Health Department Roundtable</strong><small>Host facility licensing, food safety, and education</small></div><button class="btn btn-outline btn-sm" data-toast="Registration would open in CiviEvent.">Register</button></div>
+                  <div class="event"><div class="date-tile"><span>NOV</span><strong>17</strong></div><div><strong>LABG General Membership Meeting</strong><small>12:00–2:00 p.m. · Location forthcoming</small></div><button class="btn btn-outline btn-sm" data-toast="This event would be added to your calendar.">Save</button></div>
+                </div>
+              </article>
+            </div>
+
+            <aside class="grid">
+              <article class="card card-pad">
+                <div class="section-title"><h2>Quick actions</h2></div>
+                <div class="quick-links">
+                  <a class="quick-link" href="#events" data-jump="events"><strong>Submit an event</strong><span>Send it through Guild review.</span></a>
+                  <a class="quick-link" href="#forums" data-jump="forums"><strong>Ask members</strong><span>Start a forum discussion.</span></a>
+                  <a class="quick-link" href="#representatives" data-jump="representatives"><strong>Add a representative</strong><span>Assign access and roles.</span></a>
+                  <a class="quick-link" href="#resources" data-jump="resources"><strong>Find a resource</strong><span>Guides, forms, and recordings.</span></a>
+                  <a class="quick-link" href="#advantage" data-jump="advantage"><strong>Member Advantage</strong><span>Offers, group buys, and savings.</span></a>
+                  <a class="quick-link" href="#services" data-jump="services" data-service-tab="advocacy"><strong>Advocacy help</strong><span>Ask the Guild and track an issue.</span></a>
+                </div>
+              </article>
+              <article class="card card-pad">
+                <div class="section-title"><h2>Guild pulse</h2></div>
+                <div class="thread-list">
+                  <div class="thread"><div class="person-avatar">CM</div><div><h3>Prop 65 and CalRecycle update</h3><p>Candace Moon · Legal &amp; Compliance</p><div class="thread-meta"><span>12 replies</span><span>Updated 2h ago</span></div></div></div>
+                  <div class="thread"><div class="person-avatar">LABG</div><div><h3>Host facility licensing questions</h3><p>Advocacy · Health Department</p><div class="thread-meta"><span>19 replies</span><span>Updated yesterday</span></div></div></div>
+                </div>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-profile" data-title="Brewery Profile">
+          <div class="page-head"><div><p class="eyebrow">Organization record</p><h1>Brewery profile</h1><p class="lead">One brewery record powers the public directory, Guild communications, advocacy data, and member eligibility.</p></div><div class="actions"><button class="btn btn-outline" data-toast="A public preview would open in a new tab.">Preview public page</button><button class="btn btn-primary" id="saveProfile">Save changes</button></div></div>
+          <div class="grid grid-main">
+            <article class="card form-card">
+              <div class="section-title"><h2>Public information</h2><span class="status good">Visible</span></div>
+              <form class="form-grid" id="profileForm">
+                <div class="field"><label for="breweryName">Brewery name</label><input id="breweryName" value="Angry Horse Brewing"></div>
+                <div class="field"><label for="memberType">Member type</label><input id="memberType" value="Independent Brewery Member" disabled><span class="help">Guild staff manages membership class.</span></div>
+                <div class="field"><label for="website">Website</label><input id="website" value="https://angryhorsebrewing.com"></div>
+                <div class="field"><label for="phone">Public phone</label><input id="phone" value="(323) 888-5866"></div>
+                <div class="field full"><label for="address">Taproom address</label><input id="address" value="603–605 W. Whittier Blvd., Montebello, CA 90640"></div>
+                <div class="field full"><label for="description">Brewery description</label><textarea id="description">Independent craft brewery in Montebello, rooted in craftsmanship, community, and the belief that great beer brings people together.</textarea><span class="help">Shown in the public brewery directory and map.</span></div>
+                <div class="field"><label for="services">Service model</label><select id="services"><option selected>Taproom + Self-Distribution</option><option>Taproom Only</option><option>Production Brewery</option></select></div>
+                <div class="field"><label for="production">Annual production</label><select id="production"><option>Select a range</option><option>Under 500 bbl</option><option>500–2,499 bbl</option><option>2,500–9,999 bbl</option></select></div>
+                <div class="field full"><label>Directory features</label><div class="check-grid"><label class="check"><input type="checkbox" checked> Taproom</label><label class="check"><input type="checkbox" checked> Outdoor seating</label><label class="check"><input type="checkbox" checked> Food partners</label><label class="check"><input type="checkbox"> Family friendly</label></div></div>
+              </form>
+            </article>
+            <aside class="card profile-preview">
+              <div class="profile-cover"></div><div class="profile-body"><div class="profile-logo">AHB</div><h2>Angry Horse Brewing</h2><div class="profile-meta">Montebello · Independent Brewery Member</div><div class="tags"><span class="tag">Taproom</span><span class="tag">Self-Distribution</span><span class="tag">Outdoor Seating</span></div><p style="color:var(--muted);font-size:13px;margin-top:17px">Independent craft brewery rooted in craftsmanship, community, and the belief that great beer brings people together.</p><div class="completion"><div class="completion-head"><span>Profile completeness</span><strong>82%</strong></div><div class="progress"><span style="width:82%"></span></div></div><div style="margin-top:20px"><button class="btn btn-blue" style="width:100%" data-toast="This would open the brewery’s public directory page.">View directory listing</button></div></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-representatives" data-title="Representatives">
+          <div class="page-head"><div><p class="eyebrow">People and permissions</p><h1>Brewery representatives</h1><p class="lead">Give each person the right access without turning them into separate Guild members. One person can hold multiple roles.</p></div><button class="btn btn-primary" data-modal="repModal">+ Add representative</button></div>
+          <div class="status-strip card">
+            <div class="stat"><span>Active people</span><strong>3</strong></div><div class="stat"><span>Voting rep</span><strong>Assigned</strong></div><div class="stat"><span>Billing rep</span><strong>Assigned</strong></div><div class="stat"><span>Open invitations</span><strong>0</strong></div>
+          </div>
+          <article class="card table-card">
+            <div class="table-wrap"><table><thead><tr><th>Representative</th><th>Guild roles</th><th>Portal access</th><th>Last active</th><th></th></tr></thead><tbody>
+              <tr><td><div class="person"><div class="person-avatar">NM</div><div><strong>Nathan McCusker</strong><small>President &amp; CEO</small></div></div></td><td><div class="roles"><span class="role">Primary</span><span class="role">Voting</span><span class="role">Owner</span><span class="role">Billing</span></div></td><td><span class="status good">Full access</span></td><td>Today</td><td><button class="kebab" aria-label="More actions" data-toast="Representative actions would open here.">•••</button></td></tr>
+              <tr><td><div class="person"><div class="person-avatar" style="background:#567552">LM</div><div><strong>Lynisha McDaniel</strong><small>Brewer &amp; Social Media</small></div></div></td><td><div class="roles"><span class="role">Brewer</span><span class="role">Marketing</span></div></td><td><span class="status info">Standard</span></td><td>Sep 12</td><td><button class="kebab" aria-label="More actions" data-toast="Representative actions would open here.">•••</button></td></tr>
+              <tr><td><div class="person"><div class="person-avatar" style="background:#755256">JM</div><div><strong>Justin Martinez</strong><small>Taproom Manager</small></div></div></td><td><div class="roles"><span class="role">Taproom / Events</span><span class="role">Safety / HR</span></div></td><td><span class="status info">Standard</span></td><td>Sep 10</td><td><button class="kebab" aria-label="More actions" data-toast="Representative actions would open here.">•••</button></td></tr>
+            </tbody></table></div>
+          </article>
+          <div class="grid grid-2" style="margin-top:20px">
+            <article class="card card-pad"><h2>How roles work</h2><p style="color:var(--muted)">Roles control communication lists, voting authority, billing visibility, committee access, and who can update brewery information. They do not create additional memberships.</p><div class="tags"><span class="tag">Primary</span><span class="tag">Billing</span><span class="tag">Voting</span><span class="tag">Owner</span><span class="tag">Brewer</span><span class="tag">Events</span><span class="tag">Marketing</span><span class="tag">Advocacy</span><span class="tag">Safety / HR</span></div></article>
+            <article class="card card-pad"><h2>Access review</h2><p style="color:var(--muted)">Annual access reviews help keep former employees from retaining member-only information.</p><div class="task" style="margin-top:16px"><div class="task-icon">✓</div><div><strong>Next review: January 2027</strong><small>The Primary Contact will receive a reminder.</small></div><button class="btn btn-outline btn-sm" data-toast="An access review would start here.">Review now</button></div></article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-directory" data-title="Member Directory">
+          <div class="page-head"><div><p class="eyebrow">Find a member</p><h1>Member directory</h1><p class="lead">Search breweries, taprooms, allied members, and the people who opted into member-to-member contact.</p></div><button class="btn btn-outline" data-toast="A CSV export would be limited by your role.">Export my view</button></div>
+          <div class="toolbar card"><div class="search"><label class="sr-only" for="directorySearch"></label><input id="directorySearch" placeholder="Search by brewery, city, or specialty"></div><div class="filter-row"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="brewery">Breweries</button><button class="filter" data-filter="allied">Allied</button></div></div>
+          <div class="directory-grid" id="directoryGrid">
+            <article class="card member-card" data-type="brewery" data-search="angry horse brewing montebello self distribution"><div class="member-logo" style="background:#f4ede1;color:#5a3119">AHB</div><div><h3>Angry Horse Brewing</h3><p>Montebello · Brewery Member</p></div><div class="tags"><span class="tag">Taproom</span><span class="tag">Self-Distribution</span></div></article>
+            <article class="card member-card" data-type="brewery" data-search="trademark brewing long beach events"><div class="member-logo">TM</div><div><h3>Trademark Brewing</h3><p>Long Beach · Brewery Member</p></div><div class="tags"><span class="tag">Taproom</span><span class="tag">Events</span></div></article>
+            <article class="card member-card" data-type="brewery" data-search="smog city brewing torrance distribution"><div class="member-logo" style="background:#efece8;color:#5f4b35">SC</div><div><h3>Smog City Brewing</h3><p>Torrance · Brewery Member</p></div><div class="tags"><span class="tag">Taproom</span><span class="tag">Distribution</span></div></article>
+            <article class="card member-card" data-type="brewery" data-search="benny boy brewing los angeles cider"><div class="member-logo" style="background:#e7f1ef;color:#2d625c">BB</div><div><h3>Benny Boy Brewing</h3><p>Los Angeles · Brewery Member</p></div><div class="tags"><span class="tag">Beer + Cider</span><span class="tag">Outdoor</span></div></article>
+            <article class="card member-card" data-type="brewery" data-search="la ale works hawthorne culver city"><div class="member-logo" style="background:#edf0f7;color:#394d75">LAW</div><div><h3>Los Angeles Ale Works</h3><p>Hawthorne · Brewery Member</p></div><div class="tags"><span class="tag">Multiple Locations</span></div></article>
+            <article class="card member-card" data-type="allied" data-search="the craft beer attorney candace moon legal allied"><div class="member-logo" style="background:#f5eddb;color:#765e2d">CBA</div><div><h3>The Craft Beer Attorney APC</h3><p>Allied Member · Legal</p></div><div class="tags"><span class="tag">Compliance</span><span class="tag">ABC</span></div></article>
+          </div>
+          <div class="empty card" id="directoryEmpty">No members match this search.</div>
+        </section>
+
+        <section class="screen" id="screen-forums" data-title="Guild Forums">
+          <div class="page-head"><div><p class="eyebrow">Member community</p><h1>Guild forums</h1><p class="lead">A private place for practical answers, advocacy alerts, committee work, and the conversations that should not live in scattered email chains.</p></div><button class="btn btn-primary" data-modal="threadModal">+ Start discussion</button></div>
+          <div class="forum-layout">
+            <aside class="card forum-cats" aria-label="Forum categories">
+              <button class="forum-cat active">All discussions <span>42</span></button><button class="forum-cat">Guild announcements <span>6</span></button><button class="forum-cat">Advocacy <span>11</span></button><button class="forum-cat">Taproom operations <span>9</span></button><button class="forum-cat">Production &amp; quality <span>8</span></button><button class="forum-cat">Jobs &amp; marketplace <span>5</span></button><button class="forum-cat">Committees <span>3</span></button>
+            </aside>
+            <article class="card forum-list">
+              <div class="section-title"><h2>Recent discussions</h2><select aria-label="Sort discussions" style="width:auto;min-height:38px"><option>Recently active</option><option>Newest</option><option>Most replies</option></select></div>
+              <div class="thread-list">
+                <div class="thread"><div class="person-avatar" style="background:var(--green-dark)">LABG</div><div><h3><span class="pinned">Pinned:</span> September member meeting materials</h3><p>Agenda, Prop 65 and CalRecycle handouts, and follow-up actions.</p><div class="thread-meta"><span>Guild Staff</span><span>Updated 48 min ago</span><span>Announcements</span></div></div><div class="reply-count"><strong>8</strong>replies</div></div>
+                <div class="thread"><div class="person-avatar">NM</div><div><h3>LA County host facility application roundtable</h3><p>What should we make sure the Health Department covers in the working session?</p><div class="thread-meta"><span>Nathan · Angry Horse</span><span>Updated 3h ago</span><span>Advocacy</span></div></div><div class="reply-count"><strong>19</strong>replies</div></div>
+                <div class="thread"><div class="person-avatar" style="background:#665280">KD</div><div><h3>Meal vendor documentation practices</h3><p>Sharing a checklist we use for rotating vendors and private-lot service.</p><div class="thread-meta"><span>Kelly · Member Brewery</span><span>Yesterday</span><span>Taproom operations</span></div></div><div class="reply-count"><strong>12</strong>replies</div></div>
+                <div class="thread"><div class="person-avatar" style="background:#567552">AR</div><div><h3>Bulk can shipment — interest check</h3><p>Looking for breweries interested in combining a fourth-quarter order.</p><div class="thread-meta"><span>Alex · Member Brewery</span><span>Sep 12</span><span>Production</span></div></div><div class="reply-count"><strong>7</strong>replies</div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-events" data-title="Events">
+          <div class="page-head"><div><p class="eyebrow">Events and promotion</p><h1>Member events</h1><p class="lead">Submit once for Guild review, then publish approved events to the public calendar and future communication channels.</p></div><button class="btn btn-primary" data-modal="eventModal">+ Submit event</button></div>
+          <div class="calendar-summary"><div class="card mini-stat"><span>Published events</span><strong>4</strong></div><div class="card mini-stat"><span>Awaiting review</span><strong>1</strong></div><div class="card mini-stat"><span>Needs changes</span><strong>1</strong></div></div>
+          <article class="card">
+            <div class="event-status-row"><time>SEP 26</time><div><strong>Oktoberfest at Angry Horse</strong><p>Public calendar + weekly roundup requested</p></div><span class="status pending">Needs changes</span><button class="btn btn-outline btn-sm" data-modal="eventModal">Edit</button></div>
+            <div class="event-status-row"><time>OCT 10</time><div><strong>Brewer’s Table: East LA IPA</strong><p>Public calendar requested</p></div><span class="status info">In review</span><button class="btn btn-outline btn-sm" data-toast="Submission details would open here.">View</button></div>
+            <div class="event-status-row"><time>NOV 07</time><div><strong>Community Pint Night</strong><p>Public calendar + member newsletter</p></div><span class="status good">Published</span><button class="btn btn-outline btn-sm" data-toast="The public event page would open here.">Open</button></div>
+            <div class="event-status-row"><time>JUN 06</time><div><strong>LA Independent Beer Fest</strong><p>Guild-produced event</p></div><span class="status closed">Completed</span><button class="btn btn-outline btn-sm" data-toast="Post-event materials would open here.">Recap</button></div>
+          </article>
+          <div class="grid grid-2" style="margin-top:20px"><article class="card card-pad"><h2>Approval workflow</h2><p style="color:var(--muted)">Submission → Guild review → edits if needed → approval → public calendar. Each step stays visible to the member who submitted it.</p></article><article class="card card-pad"><h2>Promotion preferences</h2><p style="color:var(--muted)">Members can request calendar, newsletter, and social consideration without sending the same information multiple times.</p></article></div>
+        </section>
+
+        <section class="screen" id="screen-resources" data-title="Resources">
+          <div class="page-head"><div><p class="eyebrow">Member library</p><h1>Resources and committees</h1><p class="lead">Searchable member-only tools, recordings, policy updates, templates, and working-group materials.</p></div><button class="btn btn-outline" data-toast="Saved resources would appear on your dashboard.">View saved</button></div>
+          <div class="toolbar card"><div class="search"><input id="resourceSearch" placeholder="Search resources"></div><div class="filter-row"><button class="filter active">All</button><button class="filter">Advocacy</button><button class="filter">Operations</button><button class="filter">Education</button></div></div>
+          <div class="resource-grid">
+            <article class="card resource-card"><div class="resource-icon">PDF</div><h3>LA County Host Facility Guide</h3><p>Application steps, document checklist, and common brewery questions.</p><div class="resource-meta"><span>Advocacy</span><span>Updated Sep 2026</span></div></article>
+            <article class="card resource-card"><div class="resource-icon">VID</div><h3>Prop 65 + CalRecycle Briefing</h3><p>Member meeting recording and slides from Candace L. Moon, Esq.</p><div class="resource-meta"><span>Legal</span><span>32 minutes</span></div></article>
+            <article class="card resource-card"><div class="resource-icon">DOC</div><h3>Taproom Safety Checklist</h3><p>Editable opening, closing, incident, and vendor documentation templates.</p><div class="resource-meta"><span>Operations</span><span>4 files</span></div></article>
+            <article class="card resource-card"><div class="resource-icon">WEB</div><h3>Independent Beer Marketing Kit</h3><p>Guild marks, member language, social assets, and usage guidance.</p><div class="resource-meta"><span>Marketing</span><span>8 assets</span></div></article>
+            <article class="card resource-card"><div class="resource-icon">COM</div><h3>Advocacy Committee</h3><p>Current priorities, meeting notes, and open volunteer assignments.</p><div class="resource-meta"><span>Committee</span><span>18 members</span></div></article>
+            <article class="card resource-card"><div class="resource-icon">EDU</div><h3>Rio Hondo Training Partners</h3><p>Fermentation science, hospitality, taproom management, and food-handler pathways.</p><div class="resource-meta"><span>Education</span><span>Partner resource</span></div></article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-advantage" data-title="Member Advantage">
+          <div class="page-head"><div><p class="eyebrow">Allied partners + collective buying power</p><h1>Member Advantage</h1><p class="lead">Turn Guild membership into measurable operating value through preferred pricing, group purchasing, trusted industry partners, and benefits built for independent breweries.</p></div><button class="btn btn-outline" data-toast="Saved offers would appear here and on your dashboard.">Saved offers</button></div>
+
+          <article class="card advantage-hero">
+            <div><p class="eyebrow" style="color:var(--green)">Your membership at work</p><h2>Better buying power without giving up your independence.</h2><p>Discover member-only offers, request quotes without re-entering brewery information, and join group buys when collective volume can unlock better pricing or freight.</p></div>
+            <div class="advantage-stats"><div class="advantage-stat"><span>Available opportunities</span><strong>6 opportunities</strong></div><div class="advantage-stat"><span>Open group buys</span><strong>2 programs</strong></div><div class="advantage-stat"><span>Illustrative savings</span><strong>$2,460 annually</strong></div></div>
+          </article>
+
+          <div class="notice"><strong>Concept pricing:</strong> the prototype does not promise a percentage or price. Final offers would show eligibility, exclusions, redemption instructions, expiration dates, and approved terms supplied by each allied partner.</div>
+
+          <div class="section-title"><h2>Featured opportunities</h2><div class="filter-row"><button class="filter active" data-benefit-filter="all">All</button><button class="filter" data-benefit-filter="ingredients">Ingredients</button><button class="filter" data-benefit-filter="packaging">Packaging</button><button class="filter" data-benefit-filter="services">Services</button></div></div>
+          <div class="benefit-grid">
+            <article class="card benefit-card" data-benefit-category="ingredients"><div class="benefit-top"><div class="partner-mark">TH</div><span class="offer-type">Terms to confirm</span></div><div class="benefit-body"><div class="benefit-partner">Thomsen Hops</div><h3>Guild member hop pricing</h3><p>Preferred access to member pricing and current hop availability for participating LABG breweries.</p><ul class="benefit-details"><li>Request a member quote</li><li>View availability and crop-year details</li><li>Connect the quote to your brewery profile</li></ul><button class="btn btn-blue" data-toast="A prefilled member quote request would be sent to the partner after confirmation.">Request member quote</button></div></article>
+
+            <article class="card benefit-card" data-benefit-category="packaging"><div class="benefit-top"><div class="partner-mark">VL</div><span class="offer-type">Terms to confirm</span></div><div class="benefit-body"><div class="benefit-partner">Visionary Labels</div><h3>Cans and packaging</h3><p>Member quote pathway for printed cans, labels, and brewery packaging projects.</p><ul class="benefit-details"><li>Member pricing request</li><li>Short-run and production options</li><li>Artwork and lead-time checklist</li></ul><button class="btn btn-blue" data-toast="The portal would prefill your brewery and packaging information.">Start a packaging quote</button></div></article>
+
+            <article class="card benefit-card" data-benefit-category="ingredients"><div class="benefit-top"><div class="partner-mark">MALT</div><span class="offer-type">Group buy concept</span></div><div class="benefit-body"><div class="benefit-partner">Guild purchasing program</div><h3>Grain and malt savings</h3><p>Aggregate member demand to pursue volume pricing, shared pallets, or coordinated freight from an approved allied supplier.</p><ul class="benefit-details"><li>Post quarterly volume needs</li><li>See progress toward price tiers</li><li>Coordinate delivery regions</li></ul><button class="btn btn-primary" data-toast="Angry Horse would be added to the grain buying interest list.">Join the interest list</button></div></article>
+
+            <article class="card benefit-card" data-benefit-category="services"><div class="benefit-top"><div class="partner-mark">CBA</div><span class="offer-type">Potential benefit</span></div><div class="benefit-body"><div class="benefit-partner">The Craft Beer Attorney APC</div><h3>Compliance office hours</h3><p>A member pathway for legal briefings, frequently asked questions, and limited office-hour access.</p><ul class="benefit-details"><li>Prop 65 and CalRecycle updates</li><li>ABC and compliance resources</li><li>Member briefing archive</li></ul><button class="btn btn-outline" data-toast="Available briefings and approved benefit terms would appear here.">View legal resources</button></div></article>
+
+            <article class="card benefit-card" data-benefit-category="packaging"><div class="benefit-top"><div class="partner-mark">CW</div><span class="offer-type">Potential benefit</span></div><div class="benefit-body"><div class="benefit-partner">Canworks</div><h3>Mobile packaging support</h3><p>Preferred quote and scheduling pathway for members planning mobile canning runs.</p><ul class="benefit-details"><li>Provide run size and package format</li><li>Coordinate nearby member dates</li><li>Request a member quote</li></ul><button class="btn btn-outline" data-toast="A mobile packaging request would open with brewery details prefilled.">Plan a canning run</button></div></article>
+
+            <article class="card benefit-card" data-benefit-category="ingredients"><div class="benefit-top"><div class="partner-mark">WL</div><span class="offer-type">Potential benefit</span></div><div class="benefit-body"><div class="benefit-partner">White Labs</div><h3>Yeast and quality education</h3><p>Technical education, member resources, and a future offer area for quality-focused brewery teams.</p><ul class="benefit-details"><li>Technical webinar archive</li><li>Quality and yeast resources</li><li>Role-targeted brewer updates</li></ul><button class="btn btn-outline" data-toast="Technical resources would open for brewery representatives with the Brewer role.">Explore technical resources</button></div></article>
+          </div>
+
+          <div class="section-title" style="margin-top:30px"><div><p class="eyebrow">Beyond discounts</p><h2>More ways the Guild can create value</h2></div></div>
+          <div class="feature-value-grid">
+            <article class="card feature-value"><div class="task-icon">GB</div><h3>Group buying</h3><p>Pool demand for grain, hops, cans, CO₂, freight, and other repeat costs.</p><a href="#services" data-jump="services" data-service-tab="buying">View open programs →</a></article>
+            <article class="card feature-value"><div class="task-icon">AH</div><h3>Advocacy help desk</h3><p>Submit a Health Department, ABC, city, or compliance issue and follow its status.</p><a href="#services" data-jump="services" data-service-tab="advocacy">Ask the Guild →</a></article>
+            <article class="card feature-value"><div class="task-icon">CD</div><h3>Compliance center</h3><p>See regulatory updates and action items tailored to your brewery profile.</p><a href="#services" data-jump="services" data-service-tab="compliance">Review alerts →</a></article>
+            <article class="card feature-value"><div class="task-icon">BM</div><h3>Brewery benchmarks</h3><p>Compare anonymous taproom, production, labor, and cost trends by peer group.</p><a href="#services" data-jump="services" data-service-tab="benchmarks">View benchmarks →</a></article>
+            <article class="card feature-value"><div class="task-icon">EX</div><h3>Jobs + exchange</h3><p>Post jobs, surplus ingredients, equipment, packaging, and available production capacity.</p><a href="#services" data-jump="services" data-service-tab="exchange">Browse exchange →</a></article>
+            <article class="card feature-value"><div class="task-icon">ROI</div><h3>Savings dashboard</h3><p>Document the value your brewery receives from benefits and group programs.</p><a href="#services" data-jump="services" data-service-tab="savings">View member value →</a></article>
+            <article class="card feature-value"><div class="task-icon">CP</div><h3>Communication preferences</h3><p>Control topics and channels for every brewery representative.</p><a href="#services" data-jump="services" data-service-tab="preferences">Manage preferences →</a></article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-services" data-title="Guild Tools">
+          <div class="page-head"><div><p class="eyebrow">Practical member services</p><h1>Guild tools</h1><p class="lead">Get help, lower operating costs, stay ahead of requirements, and learn from the collective experience of independent breweries across Los Angeles County.</p></div><button class="btn btn-outline" data-toast="Your saved tools and recent activity would appear on the dashboard.">My activity</button></div>
+
+          <div class="card service-tabs" role="tablist" aria-label="Guild tools">
+            <button class="service-tab active" role="tab" aria-selected="true" data-service="advocacy">Advocacy Help Desk</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="buying">Group Purchasing</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="compliance">Compliance Center</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="benchmarks">Benchmarks</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="exchange">Jobs + Exchange</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="savings">Savings</button>
+            <button class="service-tab" role="tab" aria-selected="false" data-service="preferences">Preferences</button>
+          </div>
+
+          <div class="service-panel active" data-service-panel="advocacy">
+            <div class="page-head"><div><h2>Advocacy Help Desk</h2><p class="lead">Send the Guild a regulatory or government issue once, keep supporting documents together, and follow the response.</p></div><button class="btn btn-primary" data-modal="advocacyModal">+ Request assistance</button></div>
+            <div class="metric-grid"><div class="card metric"><span>Open requests</span><strong>2</strong></div><div class="card metric"><span>Guild response</span><strong>1 business day</strong></div><div class="card metric"><span>Similar member issues</span><strong>6</strong></div><div class="card metric"><span>Resolved this year</span><strong>14</strong></div></div>
+            <article class="card"><div class="case-row"><div><strong>ADV-1042</strong><small>Opened Sep 11</small></div><div><strong>LA County host facility requirements</strong><small>Health Department · Montebello</small></div><div><span class="status pending">Guild follow-up</span></div><button class="btn btn-outline btn-sm" data-toast="The case timeline and messages would open here.">View case</button></div><div class="case-row"><div><strong>ADV-1038</strong><small>Opened Sep 2</small></div><div><strong>Mobile food vendor operating conditions</strong><small>Local permitting · Montebello</small></div><div><span class="status info">Information needed</span></div><button class="btn btn-outline btn-sm" data-toast="The requested documents and reply form would open here.">Respond</button></div><div class="case-row"><div><strong>ADV-0994</strong><small>Closed Aug 18</small></div><div><strong>World Cup advertising guidance</strong><small>Trademark use · Countywide</small></div><div><span class="status good">Resolved</span></div><button class="btn btn-outline btn-sm" data-toast="The resolution and reusable guidance would open here.">View outcome</button></div></article>
+          </div>
+
+          <div class="service-panel" data-service-panel="buying">
+            <div class="page-head"><div><h2>Group purchasing</h2><p class="lead">Combine forecasted needs with other members to pursue volume pricing, coordinate freight, and reduce repetitive quote work.</p></div><button class="btn btn-primary" data-toast="A new purchasing-interest form would open here.">Post a need</button></div>
+            <div class="buy-grid">
+              <article class="card buy-card"><div class="section-title"><span class="tag">Grain + malt</span><span class="status good">Open</span></div><h3>Fourth-quarter base malt buy</h3><p>Participating supplier and final price tiers will be confirmed after interest closes.</p><div class="buy-progress"><div class="completion-head"><span>26 of 40 pallets indicated</span><strong>65%</strong></div><div class="progress"><span style="width:65%"></span></div></div><small class="help">Interest closes September 30</small><div class="actions"><button class="btn btn-primary" data-toast="Angry Horse would be added with a draft quantity for confirmation.">Add our volume</button></div></article>
+              <article class="card buy-card"><div class="section-title"><span class="tag">Packaging</span><span class="status good">Open</span></div><h3>Standard can-end order</h3><p>Pool common can-end formats and coordinate regional delivery among participating breweries.</p><div class="buy-progress"><div class="completion-head"><span>7 of 10 breweries indicated</span><strong>70%</strong></div><div class="progress"><span style="width:70%"></span></div></div><small class="help">Interest closes October 7</small><div class="actions"><button class="btn btn-primary" data-toast="The format and quantity form would open here.">Join program</button></div></article>
+              <article class="card buy-card"><div class="section-title"><span class="tag">CO₂</span><span class="status info">Interest check</span></div><h3>Regional CO₂ program</h3><p>Measure demand and delivery areas before requesting a formal supplier proposal.</p><div class="buy-progress"><div class="completion-head"><span>12 breweries interested</span><strong>Exploring</strong></div><div class="progress"><span style="width:38%"></span></div></div><small class="help">No purchase commitment</small><div class="actions"><button class="btn btn-outline" data-toast="Angry Horse would be added to the nonbinding interest list.">I’m interested</button></div></article>
+            </div>
+          </div>
+
+          <div class="service-panel" data-service-panel="compliance">
+            <div class="page-head"><div><h2>Compliance center</h2><p class="lead">Updates are matched to your brewery’s location, licenses, packaging, distribution, workforce, and food-service profile.</p></div><button class="btn btn-outline" data-service-tab="preferences">Alert settings</button></div>
+            <div class="notice"><strong>Concept content:</strong> dates and requirements shown here are examples for the interface. Published alerts would be reviewed and linked to authoritative guidance before members receive them.</div>
+            <div class="alert-list">
+              <article class="card alert-card"><div class="alert-icon">!</div><div><h3>CalRecycle packaging update</h3><p>Review whether recent guidance changes any reporting or labeling steps for your packaged products.</p><div class="tags"><span class="tag">Packaging</span><span class="tag">Action recommended</span></div></div><button class="btn btn-outline btn-sm" data-toast="The reviewed guidance, source links, and applicability questions would open here.">Review</button></article>
+              <article class="card alert-card"><div class="alert-icon info">LA</div><div><h3>LA County host facility pathway</h3><p>New working-session materials are available for breweries using food vendors or exploring a host facility permit.</p><div class="tags"><span class="tag">Health Department</span><span class="tag">Los Angeles County</span></div></div><button class="btn btn-outline btn-sm" data-toast="The application checklist and roundtable materials would open here.">Open guide</button></article>
+              <article class="card alert-card"><div class="alert-icon info">ABC</div><div><h3>License profile check</h3><p>Confirm that the license types stored on your brewery profile remain current so future alerts stay relevant.</p><div class="tags"><span class="tag">Profile task</span></div></div><button class="btn btn-outline btn-sm" data-jump="profile">Update profile</button></article>
+            </div>
+          </div>
+
+          <div class="service-panel" data-service-panel="benchmarks">
+            <div class="page-head"><div><h2>Anonymous brewery benchmarks</h2><p class="lead">Compare against a meaningful peer group without exposing any individual brewery’s information.</p></div><div class="actions"><select aria-label="Benchmark peer group" style="width:auto"><option>Taprooms under 2,500 bbl</option><option>All participating breweries</option><option>Self-distributing breweries</option></select></div></div>
+            <div class="metric-grid"><div class="card metric"><span>Participating breweries</span><strong>28</strong></div><div class="card metric"><span>Your data status</span><strong><span class="status good">Current</span></strong></div><div class="card metric"><span>Minimum cohort</span><strong>8 breweries</strong></div><div class="card metric"><span>Last refresh</span><strong>September</strong></div></div>
+            <div class="benchmark-layout"><article class="card chart"><div class="section-title"><h3>Illustrative operating comparison</h3><span class="tag">Sample data</span></div><div class="bar-row"><span>Labor % of sales</span><div class="bar-track"><div class="bar-fill you" style="width:72%"></div></div><strong>24%</strong></div><div class="bar-row"><span>Peer median</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><strong>27%</strong></div><div class="bar-row"><span>COGS % of sales</span><div class="bar-track"><div class="bar-fill you" style="width:66%"></div></div><strong>22%</strong></div><div class="bar-row"><span>Peer median</span><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><strong>25%</strong></div><div class="chart-legend"><span><i class="legend-dot you"></i>Your brewery</span><span><i class="legend-dot"></i>Anonymous peer median</span></div></article><aside class="card card-pad"><h3>Privacy guardrails</h3><div class="permissions-list"><div class="permission"><div><strong>Minimum cohort size</strong><small>No result below the threshold</small></div><span class="status good">8+</span></div><div class="permission"><div><strong>Individual records</strong><small>Never visible to members</small></div><span class="status info">Private</span></div><div class="permission"><div><strong>Your participation</strong><small>Choose each metric shared</small></div><span class="status info">Controlled</span></div></div><button class="btn btn-outline" style="margin-top:18px;width:100%" data-toast="A metric-by-metric consent screen would open here.">Manage shared data</button></aside></div>
+          </div>
+
+          <div class="service-panel" data-service-panel="exchange">
+            <div class="page-head"><div><h2>Jobs and industry exchange</h2><p class="lead">A member-only marketplace for talent, equipment, ingredients, packaging, and spare production capacity.</p></div><button class="btn btn-primary" data-modal="listingModal">+ Post a listing</button></div>
+            <div class="toolbar card"><div class="search"><input placeholder="Search jobs, equipment, ingredients, or capacity"></div><div class="filter-row"><button class="filter active">All</button><button class="filter">Jobs</button><button class="filter">Equipment</button><button class="filter">Materials</button></div></div>
+            <div class="listing-grid"><article class="card listing-card"><div class="listing-meta"><span class="tag">Equipment</span><span>Posted today</span></div><h3>7 bbl brite tank available</h3><p>Jacketed tank available for sale after a cellar reconfiguration. Member inquiries only.</p><button class="btn btn-outline btn-sm" data-toast="The full listing and private contact form would open here.">View listing</button></article><article class="card listing-card"><div class="listing-meta"><span class="tag">Materials</span><span>Posted Sep 13</span></div><h3>Surplus 2025 crop hops</h3><p>Sealed inventory available by the box. Variety and lot information included in the listing.</p><button class="btn btn-outline btn-sm" data-toast="The lot details and member contact form would open here.">View inventory</button></article><article class="card listing-card"><div class="listing-meta"><span class="tag">Job</span><span>Posted Sep 12</span></div><h3>Packaging lead</h3><p>Full-time production role at a Guild member brewery in the South Bay.</p><button class="btn btn-outline btn-sm" data-toast="The job description and application instructions would open here.">View job</button></article><article class="card listing-card"><div class="listing-meta"><span class="tag">Capacity</span><span>Posted Sep 10</span></div><h3>Mobile canning date opening</h3><p>A nearby member is looking to share a scheduled packaging day and mobilization cost.</p><button class="btn btn-outline btn-sm" data-toast="The date, format, and private member contact would open here.">View opening</button></article></div>
+          </div>
+
+          <div class="service-panel" data-service-panel="savings">
+            <div class="page-head"><div><h2>Member value and savings</h2><p class="lead">Give your brewery—and the Guild—a clear picture of the financial value created through membership.</p></div><select aria-label="Savings period" style="width:auto"><option>2026 membership year</option><option>Last 12 months</option></select></div>
+            <div class="grid grid-main"><article class="card billing-card"><div class="savings-total"><div><span>Illustrative documented value</span><strong>$2,460</strong><span>Based on sample offer and participation data</span></div><div><span>Membership dues</span><strong>$1,200</strong><span>Illustrative amount in this concept</span></div></div><div class="invoice-lines"><div class="savings-row"><div><strong>Hop member pricing</strong><small>Thomsen Hops · sample calculation</small></div><span>3 purchases</span><strong>$860</strong></div><div class="savings-row"><div><strong>Packaging pricing</strong><small>Visionary Labels · sample calculation</small></div><span>2 orders</span><strong>$740</strong></div><div class="savings-row"><div><strong>Group grain purchase</strong><small>Shared pricing and freight</small></div><span>1 program</span><strong>$610</strong></div><div class="savings-row"><div><strong>Educational programs</strong><small>Member registration value</small></div><span>5 seats</span><strong>$250</strong></div></div></article><aside class="card card-pad"><h2>Value beyond discounts</h2><p style="color:var(--muted)">The dashboard can also document services that are harder to price but important to retention.</p><div class="permissions-list"><div class="permission"><div><strong>Advocacy cases resolved</strong><small>Issues handled for your brewery</small></div><strong>2</strong></div><div class="permission"><div><strong>Training participation</strong><small>Member seats used</small></div><strong>5</strong></div><div class="permission"><div><strong>Resources downloaded</strong><small>Guides and templates</small></div><strong>11</strong></div></div></aside></div>
+          </div>
+
+          <div class="service-panel" data-service-panel="preferences">
+            <div class="page-head"><div><h2>Communication preferences</h2><p class="lead">Control what Nathan receives. Other representatives manage their own preferences within the roles assigned by the brewery.</p></div><button class="btn btn-primary" data-toast="Communication preferences saved for Nathan.">Save preferences</button></div>
+            <div class="grid grid-2"><article class="card preference-group"><div class="section-title"><h3>Topics</h3><span class="tag">Nathan McCusker</span></div><div class="preference-row"><div><strong>Urgent advocacy alerts</strong><small>Immediate regulatory or government developments</small></div><span class="tag">Email + SMS</span><label class="switch"><input type="checkbox" checked aria-label="Urgent advocacy alerts"><span></span></label></div><div class="preference-row"><div><strong>Guild announcements</strong><small>Meetings, minutes, elections, and major initiatives</small></div><span class="tag">Email</span><label class="switch"><input type="checkbox" checked aria-label="Guild announcements"><span></span></label></div><div class="preference-row"><div><strong>Member Advantage</strong><small>New offers, expiring discounts, and group buys</small></div><span class="tag">Weekly</span><label class="switch"><input type="checkbox" checked aria-label="Member Advantage"><span></span></label></div><div class="preference-row"><div><strong>Production and quality</strong><small>Brewing, ingredients, laboratory, and technical education</small></div><span class="tag">Email</span><label class="switch"><input type="checkbox" aria-label="Production and quality"><span></span></label></div></article><article class="card preference-group"><div class="section-title"><h3>Delivery rules</h3></div><div class="field"><label for="digest">Routine member updates</label><select id="digest"><option>Weekly digest</option><option>Send as published</option><option>Monthly digest</option></select></div><div class="field" style="margin-top:16px"><label for="quietHours">SMS quiet hours</label><select id="quietHours"><option>9:00 p.m.–8:00 a.m.</option><option>10:00 p.m.–7:00 a.m.</option><option>No quiet hours</option></select></div><div class="permission" style="margin-top:18px"><div><strong>Required membership notices</strong><small>Renewals, receipts, governance notices, and account security cannot be disabled here.</small></div><span class="status info">Required</span></div><div class="permission" style="margin-top:10px"><div><strong>Role-based routing</strong><small>Billing updates go to Billing representatives; production updates can go to Brewers.</small></div><span class="status good">Active</span></div></article></div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-membership" data-title="Membership & Billing">
+          <div class="page-head"><div><p class="eyebrow">CiviMember + CiviContribute</p><h1>Membership and billing</h1><p class="lead">A clear view of membership standing, renewal history, invoices, receipts, and who can manage payment information.</p></div><button class="btn btn-outline" data-toast="A membership statement PDF would download here.">Download statement</button></div>
+          <div class="grid grid-main">
+            <article class="card billing-card"><div class="billing-head"><div><h2>Independent Brewery Membership</h2><p>Active through December 31, 2026</p></div><div class="amount"><strong>Paid</strong><span>2026 membership year</span></div></div><div class="invoice-lines"><div class="invoice-line"><span>Annual brewery membership</span><strong>$1,200.00</strong></div><div class="invoice-line"><span>Payment received · January 8, 2026</span><strong>−$1,200.00</strong></div><div class="invoice-line"><span>Balance due</span><strong>$0.00</strong></div><div class="actions" style="margin-top:20px"><button class="btn btn-blue" data-toast="The receipt would download here.">Download receipt</button><button class="btn btn-outline" data-toast="Payment history would open here.">Payment history</button></div></div></article>
+            <aside class="grid">
+              <article class="card card-pad"><div class="section-title"><h2>Billing contact</h2><button class="btn btn-outline btn-sm" data-jump="representatives">Change</button></div><div class="person"><div class="person-avatar">NM</div><div><strong>Nathan McCusker</strong><small>Primary + Billing representative</small></div></div></article>
+              <article class="card card-pad"><h2>Role-based access</h2><div class="permissions-list"><div class="permission"><div><strong>View membership standing</strong><small>All representatives</small></div><span class="status good">Allowed</span></div><div class="permission"><div><strong>View invoices and receipts</strong><small>Primary + Billing</small></div><span class="status info">Restricted</span></div><div class="permission"><div><strong>Renew membership</strong><small>Primary + Billing</small></div><span class="status info">Restricted</span></div></div></article>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="repModal" role="dialog" aria-modal="true" aria-labelledby="repModalTitle">
+    <div class="modal"><div class="modal-head"><div><p class="eyebrow">New person relationship</p><h2 id="repModalTitle">Add a brewery representative</h2><p class="lead">Invite someone and define how they represent Angry Horse Brewing.</p></div><button class="close" data-close aria-label="Close">×</button></div><form class="form-grid"><div class="field"><label for="repFirst">First name</label><input id="repFirst" placeholder="First name"></div><div class="field"><label for="repLast">Last name</label><input id="repLast" placeholder="Last name"></div><div class="field full"><label for="repEmail">Work email</label><input id="repEmail" type="email" placeholder="name@brewery.com"></div><div class="field full"><label>Guild roles</label><div class="check-grid"><label class="check"><input type="checkbox"> Primary</label><label class="check"><input type="checkbox"> Billing</label><label class="check"><input type="checkbox"> Voting</label><label class="check"><input type="checkbox"> Owner</label><label class="check"><input type="checkbox"> Brewer</label><label class="check"><input type="checkbox"> Taproom / Events</label><label class="check"><input type="checkbox"> Marketing</label><label class="check"><input type="checkbox"> Advocacy</label></div></div></form><div class="modal-foot"><button class="btn btn-outline" data-close>Cancel</button><button class="btn btn-primary" data-submit="Representative invitation drafted.">Send invitation</button></div></div>
+  </div>
+
+  <div class="modal-backdrop" id="threadModal" role="dialog" aria-modal="true" aria-labelledby="threadModalTitle"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Member community</p><h2 id="threadModalTitle">Start a discussion</h2></div><button class="close" data-close aria-label="Close">×</button></div><form class="form-grid"><div class="field full"><label for="threadCategory">Category</label><select id="threadCategory"><option>Advocacy</option><option>Taproom operations</option><option>Production &amp; quality</option><option>Jobs &amp; marketplace</option></select></div><div class="field full"><label for="threadSubject">Subject</label><input id="threadSubject" placeholder="What do you want to ask members?"></div><div class="field full"><label for="threadBody">Message</label><textarea id="threadBody" placeholder="Add useful context..."></textarea></div></form><div class="modal-foot"><button class="btn btn-outline" data-close>Cancel</button><button class="btn btn-primary" data-submit="Discussion draft created.">Preview discussion</button></div></div></div>
+
+  <div class="modal-backdrop" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Member event submission</p><h2 id="eventModalTitle">Submit an event</h2><p class="lead">One submission can feed the calendar, newsletter, and social consideration.</p></div><button class="close" data-close aria-label="Close">×</button></div><form class="form-grid"><div class="field full"><label for="eventName">Event name</label><input id="eventName" value="Oktoberfest at Angry Horse"></div><div class="field"><label for="eventDate">Date</label><input id="eventDate" type="date" value="2026-09-26"></div><div class="field"><label for="eventTime">Start time</label><input id="eventTime" type="time" value="14:00"></div><div class="field full"><label for="eventCopy">Public description</label><textarea id="eventCopy">Join us in Montebello for Märzen, food, music, and a full afternoon celebrating independent local beer.</textarea></div><div class="field full"><label>Promotion requested</label><div class="check-grid"><label class="check"><input type="checkbox" checked> Public calendar</label><label class="check"><input type="checkbox" checked> Newsletter</label><label class="check"><input type="checkbox"> Social consideration</label><label class="check"><input type="checkbox"> Member-only</label></div></div></form><div class="modal-foot"><button class="btn btn-outline" data-close>Save draft</button><button class="btn btn-primary" data-submit="Event submitted for Guild review.">Submit for review</button></div></div></div>
+
+  <div class="modal-backdrop" id="advocacyModal" role="dialog" aria-modal="true" aria-labelledby="advocacyModalTitle"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Private member request</p><h2 id="advocacyModalTitle">Request advocacy assistance</h2><p class="lead">The Guild can compare your issue with similar member cases while keeping brewery-specific details private.</p></div><button class="close" data-close aria-label="Close">×</button></div><form class="form-grid"><div class="field"><label for="agency">Agency or jurisdiction</label><select id="agency"><option>LA County Health Department</option><option>California ABC</option><option>City or local agency</option><option>Other</option></select></div><div class="field"><label for="issueType">Issue type</label><select id="issueType"><option>Permit or application</option><option>Inspection or enforcement</option><option>Policy clarification</option><option>Industry-wide concern</option></select></div><div class="field full"><label for="issueSubject">Short description</label><input id="issueSubject" placeholder="What do you need help with?"></div><div class="field full"><label for="issueDetails">Background and requested outcome</label><textarea id="issueDetails" placeholder="Include dates, contacts, prior steps, and what a successful outcome would look like."></textarea></div><div class="field full"><label class="check"><input type="checkbox" checked> The Guild may anonymously group this issue with similar member requests.</label></div></form><div class="modal-foot"><button class="btn btn-outline" data-close>Save draft</button><button class="btn btn-primary" data-submit="Advocacy request submitted privately to Guild staff.">Submit request</button></div></div></div>
+
+  <div class="modal-backdrop" id="listingModal" role="dialog" aria-modal="true" aria-labelledby="listingModalTitle"><div class="modal"><div class="modal-head"><div><p class="eyebrow">Member-only exchange</p><h2 id="listingModalTitle">Post a listing</h2></div><button class="close" data-close aria-label="Close">×</button></div><form class="form-grid"><div class="field"><label for="listingType">Listing type</label><select id="listingType"><option>Equipment</option><option>Job</option><option>Ingredients or materials</option><option>Production capacity</option></select></div><div class="field"><label for="listingVisibility">Visibility</label><select id="listingVisibility"><option>Guild members only</option><option>Brewery members only</option></select></div><div class="field full"><label for="listingTitle">Title</label><input id="listingTitle" placeholder="What are you offering or looking for?"></div><div class="field full"><label for="listingDetails">Details</label><textarea id="listingDetails" placeholder="Condition, quantity, location, timing, and contact instructions"></textarea></div><div class="field full"><label class="check"><input type="checkbox" checked> Hide my direct contact information and use the portal inquiry form.</label></div></form><div class="modal-foot"><button class="btn btn-outline" data-close>Cancel</button><button class="btn btn-primary" data-submit="Listing submitted for member-only publication.">Post listing</button></div></div></div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const navButtons = [...document.querySelectorAll('[data-screen]')];
+    const sidebar = document.getElementById('sidebar');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const toast = document.getElementById('toast');
+    let lastFocus = null;
+
+    function showScreen(name, updateHash = true) {
+      const target = document.getElementById('screen-' + name) || document.getElementById('screen-dashboard');
+      screens.forEach(screen => screen.classList.toggle('active', screen === target));
+      navButtons.forEach(button => button.classList.toggle('active', button.dataset.screen === target.id.replace('screen-', '')));
+      document.title = `${target.dataset.title} · LABG Member Portal Concept`;
+      if (updateHash) history.replaceState(null, '', '#' + target.id.replace('screen-', ''));
+      sidebar.classList.remove('open');
+      mobileMenu.setAttribute('aria-expanded', 'false');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navButtons.forEach(button => button.addEventListener('click', () => showScreen(button.dataset.screen)));
+    document.querySelectorAll('[data-jump]').forEach(link => link.addEventListener('click', event => { event.preventDefault(); showScreen(link.dataset.jump); }));
+    mobileMenu.addEventListener('click', () => { const open = sidebar.classList.toggle('open'); mobileMenu.setAttribute('aria-expanded', String(open)); });
+
+    function notify(message) {
+      toast.innerHTML = `<strong>Concept interaction</strong><br>${message}`;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+    document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); notify(button.dataset.toast); }));
+    document.getElementById('saveProfile').addEventListener('click', () => notify('Brewery profile changes saved. The public directory would update after validation.'));
+
+    function openModal(id, opener) { const modal = document.getElementById(id); if (!modal) return; lastFocus = opener; modal.classList.add('open'); modal.querySelector('input,select,textarea,button')?.focus(); }
+    function closeModal(modal) { modal.classList.remove('open'); lastFocus?.focus(); }
+    document.querySelectorAll('[data-modal]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modal, button)));
+    document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); closeModal(button.closest('.modal-backdrop')); }));
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModal(backdrop); }));
+    document.querySelectorAll('[data-submit]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); const message = button.dataset.submit; closeModal(button.closest('.modal-backdrop')); notify(message); }));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { const open = document.querySelector('.modal-backdrop.open'); if (open) closeModal(open); else sidebar.classList.remove('open'); } });
+
+    let directoryType = 'all';
+    const directorySearch = document.getElementById('directorySearch');
+    const directoryCards = [...document.querySelectorAll('#directoryGrid .member-card')];
+    function filterDirectory() {
+      const query = directorySearch.value.trim().toLowerCase();
+      let shown = 0;
+      directoryCards.forEach(card => {
+        const matchesType = directoryType === 'all' || card.dataset.type === directoryType;
+        const matchesQuery = !query || card.dataset.search.includes(query);
+        card.style.display = matchesType && matchesQuery ? '' : 'none';
+        if (matchesType && matchesQuery) shown++;
+      });
+      document.getElementById('directoryEmpty').style.display = shown ? 'none' : 'block';
+    }
+    directorySearch.addEventListener('input', filterDirectory);
+    document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => { directoryType = button.dataset.filter; document.querySelectorAll('[data-filter]').forEach(item => item.classList.toggle('active', item === button)); filterDirectory(); }));
+    document.querySelectorAll('.forum-cat').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.forum-cat').forEach(item => item.classList.toggle('active', item === button)); notify(`${button.childNodes[0].textContent.trim()} selected. Threads would filter to this category.`); }));
+    const benefitCards = [...document.querySelectorAll('[data-benefit-category]')];
+    document.querySelectorAll('[data-benefit-filter]').forEach(button => button.addEventListener('click', () => {
+      const category = button.dataset.benefitFilter;
+      document.querySelectorAll('[data-benefit-filter]').forEach(item => item.classList.toggle('active', item === button));
+      benefitCards.forEach(card => card.style.display = category === 'all' || card.dataset.benefitCategory === category ? '' : 'none');
+    }));
+    const serviceTabs = [...document.querySelectorAll('[data-service]')];
+    const servicePanels = [...document.querySelectorAll('[data-service-panel]')];
+    function showService(name) {
+      const selected = serviceTabs.find(tab => tab.dataset.service === name) || serviceTabs[0];
+      serviceTabs.forEach(tab => { const active = tab === selected; tab.classList.toggle('active', active); tab.setAttribute('aria-selected', String(active)); });
+      servicePanels.forEach(panel => panel.classList.toggle('active', panel.dataset.servicePanel === selected.dataset.service));
+    }
+    serviceTabs.forEach(tab => tab.addEventListener('click', () => showService(tab.dataset.service)));
+    document.querySelectorAll('[data-service-tab]').forEach(link => link.addEventListener('click', event => { event.preventDefault(); showScreen('services'); showService(link.dataset.serviceTab); }));
+
+    const initial = location.hash.replace('#', '');
+    if (initial) showScreen(initial, false);
+  </script>
+</body>
+</html>
