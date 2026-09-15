@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=3">
   <style>
     :root {
       --blue: #32577c;
@@ -56,26 +56,13 @@
       overflow-y: auto;
     }
     .brand {
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      gap: 12px;
+      display: flex;
+      justify-content: center;
       align-items: center;
-      padding: 0 8px 26px;
+      padding: 0 8px 24px;
       border-bottom: 1px solid rgba(255,255,255,.13);
     }
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--green);
-      color: var(--green);
-      font-family: "Hammersmith One", sans-serif;
-      font-size: 18px;
-      letter-spacing: -.06em;
-    }
-    .brand small { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .72; }
-    .brand strong { display: block; font-family: "Hammersmith One", sans-serif; font-size: 18px; line-height: 1.08; text-transform: uppercase; }
+    .brand-logo { display: block; width: min(100%, 190px); height: auto; }
     .nav-label { margin: 24px 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.48); }
     .nav { display: grid; gap: 4px; }
     .nav button {
@@ -481,8 +468,7 @@
   <div class="app">
     <aside class="sidebar" id="sidebar" aria-label="Member portal navigation">
       <div class="brand">
-        <div class="brand-mark">LA</div>
-        <div><small>Los Angeles County</small><strong>Brewers Guild</strong></div>
+        <img class="brand-logo" src="./labg-logo.svg" alt="Los Angeles County Brewers Guild">
       </div>
       <div class="nav-label">Member portal</div>
       <nav class="nav" id="nav">
